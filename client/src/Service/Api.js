@@ -1,0 +1,11 @@
+import axios from "axios";
+
+const Api = axios.create({
+  baseURL: "http://localhost:8000/"
+});
+
+export default {
+  convert(payload) {
+    return Api.post("/shorten", { originLink: payload });
+  }
+};

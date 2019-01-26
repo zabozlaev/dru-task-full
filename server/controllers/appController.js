@@ -9,6 +9,12 @@ module.exports = {
       return res.sendStatus(404);
     }
 
+    if (originLink.trim().length < 1) {
+      return res.send(403).send({
+        error: "No empty links available!"
+      });
+    }
+
     const foundUrl = await UrlModel.find({ originLink });
 
     if (!foundUrl) {
@@ -36,7 +42,9 @@ module.exports = {
     const foundUrl = await UrlModel.findOne({ shortLink });
 
     if (!foundUrl) {
-      return res.sendStatus(404);
+      return res.status(404).send({
+        error: "ERROR"
+      });
     }
 
     res.redirect(foundUrl.originLink);

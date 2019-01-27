@@ -16,7 +16,10 @@ module.exports = {
         });
       }
 
-      const foundUrl = (await UrlModel.find({ originLink }))[0];
+      const foundUrl = await UrlModel.findOneAndUpdate(
+        { originLink },
+        { shortLink: randToken.generate(6) }
+      );
 
       if (foundUrl) {
         return res.send({

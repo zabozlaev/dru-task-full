@@ -2,17 +2,23 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 module.exports = mongoose.model(
-  "url",
+  "Link",
   Schema({
     shortLink: {
       type: String,
-      required: true,
-      unique: true
+      required: true
     },
-    originLink: {
+    url: {
       type: String,
-      required: true,
-      unique: true
+      required: true
+    },
+    visitLimit: {
+      type: Number,
+      default: 1
+    },
+    visitNumber: {
+      type: Number,
+      default: 0
     }
   })
 );

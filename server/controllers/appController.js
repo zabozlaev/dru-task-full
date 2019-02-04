@@ -1,68 +1,85 @@
-const UrlModel = require("../models/url.js");
+const LinkModel = require("../models/Link.js");
 const randToken = require("rand-token");
 
 module.exports = {
   async convertUrl(req, res) {
     try {
-      const { originLink } = req.body;
+      const { url, visitLimit } = req.body;
 
-      if (!originLink) {
+      visitLimit = visitLimit < 1 ? 1 : visitLimit;
+
+      if (!url) {
         return res.sendStatus(404);
       }
 
-      if (originLink.trim().length < 1) {
+      if (url.length < 1) {
         return res.send(403).send({
           error: "No empty links available!"
         });
       }
 
-      const foundUrl = await UrlModel.findOneAndUpdate(
-        { originLink },
-        { shortLink: randToken.generate(6) }
-      );
+      const foundUrl = (await LinkModel.find({ url }))[0];
 
       if (foundUrl) {
         return res.send({
-          originLink: foundUrl.originLink,
+          url: foundUrl.url,
           shortLink: foundUrl.shortLink
         });
       }
 
-      const shortLink = randToken.generate(6);
+      const tokenShort = randToken.generate(6);
 
-      const urlCreated = new UrlModel({
-        originLink,
-        shortLink
+      const urlCreated = new LinkModel({
+        url,
+        shortLink: tokenShort,
+        visitLimit
       });
       urlCreated
         .save()
         .then(() => {
           res.status(201).send({
-            shortLink
+            shortLink: tokenShort
           });
         })
-        .catch(e => console.log(e));
-    } catch (e) {
-      console.log(e);
-    }
+        .catch(e => {});
+    } catch (e) {}
   },
   async redirectUser(req, res) {
     const { shortLink } = req.params;
 
-    const foundUrl = await UrlModel.findOne({
-      shortLink: shortLink.toString()
-    });
-
-    if (!foundUrl) {
-      return res.status(404).send({
-        error: "Incorrect URL"
+    try {
+      const foundUrl = await LinkModel.findOne({
+        shortLink: shortLink
       });
+
+      if (!foundUrl) {
+        return res.status(404).send({
+          error: "Incorrect URL"
+        });
+      }
+
+      if (foundUrl.visitNumber >= foundUrl.visitLimit) {
+        await LinkModel.deleteOne({ shortLink })
+          .then(() => {
+            return res.send({
+              error: "This link has expired"
+            });
+          })
+          .catch(e => {});
+      }
+
+      await LinkModel.findOneAndUpdate(
+        { _id: foundUrl._id },
+        { $inc: { visitNumber: 1 } }
+      );
+
+      endpoint = foundUrl.url.includes("://")
+        ? foundUrl.url
+        : "http://" + foundUrl.url;
+
+      res.redirect(endpoint);
+    } catch (e) {
+      res.send("");
     }
-
-    endpoint = foundUrl.originLink.includes("://")
-      ? foundUrl.originLink
-      : "http://" + foundUrl.originLink;
-
-    res.redirect(endpoint);
   }
 };

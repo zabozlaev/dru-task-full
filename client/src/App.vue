@@ -6,7 +6,13 @@
 
 <style>
 body {
-  background: #2c3e50;
+  background: rgb(2, 0, 36);
+  background: linear-gradient(
+    90deg,
+    rgba(2, 0, 36, 1) 0%,
+    rgba(121, 9, 120, 1) 52%,
+    rgba(0, 212, 255, 1) 100%
+  );
 }
 
 #app {

@@ -1,9 +1,8 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 
-const cors = require("cors");
-
-require("dotenv").config({ path: "variables.env" });
+app.use(cors());
 
 const bodyParser = require("body-parser");
 
@@ -13,28 +12,11 @@ const { URI, PORT } = require("./config/config.js");
 
 const setRoutes = require("./routes.js");
 
+app.use(require("morgan")("combined"));
+
 app.use(bodyParser.json());
-app.use(cors());
 
 setRoutes(app);
-
-// app.post("*", (req, res, next) => {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept"
-//   );
-//   next();
-// });
-
-// app.get("*", (req, res, next) => {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept"
-//   );
-//   next();
-// });
 
 mongoose
   .connect(

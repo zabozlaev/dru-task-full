@@ -1,11 +1,11 @@
 import axios from "axios";
 
 const Api = axios.create({
-  baseURL: "http://localhost:8000/"
+  baseURL: "https://zabcode-dynamic-dlzkqlv7g.now.sh/"
 });
 
 export default {
   convert(payload) {
-    return Api.post("/shorten", { originLink: payload });
+    return Api.post("/shorten", payload);
   }
 };

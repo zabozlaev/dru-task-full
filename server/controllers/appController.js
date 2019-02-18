@@ -1,5 +1,21 @@
 const LinkModel = require("../models/Link.js");
-const randToken = require("rand-token");
+
+const shortenLink = size => {
+  let result = "";
+
+    const KIT = "abcdefghijklmnopqrstuvwxyz_$~1234567890-#@ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    const KIT_LENGTH = KIT.length;
+
+    for (let i = 0; i < this.size; i += 1) {
+      result += KIT.charAt(Math.floor(Math.random() * KIT_LENGTH));
+    }
+    
+    return result;
+  }  
+};
+
+
 
 module.exports = {
   async convertUrl(req, res) {
@@ -27,7 +43,7 @@ module.exports = {
         });
       }
 
-      const tokenShort = randToken.generate(6);
+      const tokenShort = shprtenLink(6);
 
       const urlCreated = new LinkModel({
         url,

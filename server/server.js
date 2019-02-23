@@ -6,8 +6,6 @@ const bodyParser = require("body-parser");
 
 const mongoose = require("mongoose");
 
-const { URI, PORT } = require("./config/config.js");
-
 const AppRoutes = require("./routes.js");
 
 module.exports.start = async () => {
@@ -21,7 +19,7 @@ module.exports.start = async () => {
 
   mongoose
     .connect(
-      URI,
+      process.env.URI,
       {
         useNewUrlParser: true,
         useCreateIndex: true
